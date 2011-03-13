@@ -12,7 +12,7 @@ namespace Time {
 #ifdef POSIX
 	struct timespec now;
 	clock_gettime(CLOCK_MONOTONIC, &now);
-	millis = (now.tv_sec * 1000.0) + (now.tv_nsec / 1000.0);
+	millis = (now.tv_sec * 1000.0) + (now.tv_nsec / 1000000.0);
 #else
 	clock_t now = clock();
 	millis = (now / CLOCKS_PER_SEC) * 1000;

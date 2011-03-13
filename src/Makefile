@@ -15,7 +15,7 @@ SRC_DIR = src
 TEST_DIR = test
 
 # Flags passed to the preprocessor.
-CPPFLAGS += -I$(GTEST_DIR)/include -I$(SRC_DIR) -lrt
+CPPFLAGS += -I$(GTEST_DIR)/include -I$(SRC_DIR) -lglut -lrt
 
 # Flags passed to the C++ compiler.
 CXXFLAGS += -g -Wall -Wextra --pedantic
@@ -73,14 +73,20 @@ gtest_main.a : gtest-all.o gtest_main.o
 # sample1_unittest : sample1.o sample1_unittest.o gtest_main.a
 #	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
 
-clock.o : $(SRC_DIR)/clock.cc $(SRC_DIR)/clock.h
+clock.o : $(SRC_DIR)/clock.cc
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -D$(OS) -c $(SRC_DIR)/clock.cc
 
-timer.o : $(SRC_DIR)/timer.cc $(SRC_DIR)/timer.h
+timer.o : $(SRC_DIR)/timer.cc
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -D$(OS) -c $(SRC_DIR)/timer.cc
 
-test.o : $(SRC_DIR)/test.cc $(SRC_DIR)/clock.h $(SRC_DIR)/timer.h
+test.o : $(SRC_DIR)/test.cc
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(SRC_DIR)/test.cc
 
+demo.o : $(SRC_DIR)/demo.c
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(SRC_DIR)/demo.c
+
 simple_test : test.o clock.o timer.o
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -D$(OS) $^ -o $@
+
+demo : demo.o timer.o clock.o
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -D$(OS) $^ -o $@
