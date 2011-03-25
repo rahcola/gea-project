@@ -25,16 +25,22 @@ timer.o : $(TIME_SRC)/timer.cc clock.o
 	$(CXX) $(TIME_CPPFLAGS) $(CXXFLAGS) -D$(OS) -c -o $@ $<
 
 # Demo
-DEMO_OBJ = demo.o
+DEMO_OBJ = demo.o cli_demo.o
 DEMO_SRC = src/demo
 DEMO_CPPFLAGS = -Isrc/time -lglut
 
 demo.o : $(DEMO_SRC)/demo.c $(TIME_OBJ)
 	$(CXX) $(DEMO_CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
-demo : $(DEMO_OBJ) $(TIME_OBJ)
+cli_demo.o : $(DEMO_SRC)/cli_demo.cc $(TIME_OBJ)
+	$(CXX) $(DEMO_CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
+
+demo : demo.o $(TIME_OBJ)
+	$(CXX) $(DEMO_CPPFLAGS) $(CXXFLAGS) -D$(OS) $^ -o $@
+
+cli_demo : cli_demo.o $(TIME_OBJ)
 	$(CXX) $(DEMO_CPPFLAGS) $(CXXFLAGS) -D$(OS) $^ -o $@
 
 # Clean
 clean :
-	rm $(TIME_OBJ) $(DEMO_OBJ) demo
+	rm $(TIME_OBJ) $(DEMO_OBJ) demo cli_demo
