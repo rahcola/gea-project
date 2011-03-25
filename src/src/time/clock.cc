@@ -2,7 +2,8 @@
 #ifdef POSIX
 #include <time.h>
 #elif WINDOWS
-
+#include <Windows.h>
+#include <time.h>
 #else
 #include <ctime>
 #endif
@@ -16,7 +17,7 @@ namespace Time {
 	clock_gettime(CLOCK_MONOTONIC, &now);
 	millis = (now.tv_sec * 1000.0) + (now.tv_nsec / 1000000.0);
 #elif WINDOWS
-
+	millis = (double)(GetTickCount());
 #else
 	clock_t now = clock();
 	millis = (now / CLOCKS_PER_SEC) * 1000;
