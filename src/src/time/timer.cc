@@ -9,7 +9,7 @@ namespace Time {
 	double now_;
 	double speed_;
   public:
-	Timer();
+	Timer(IClock *parent);
 	~Timer();
 	double tick();
 	double getNow();
@@ -17,8 +17,8 @@ namespace Time {
 	void setSpeed(double speed);
   };
 
-  Timer::Timer()
-	: parent_(createWallClock()),
+  Timer::Timer(IClock *parent)
+	: parent_(parent),
 	  now_(parent_->getNow()),
 	  speed_(1.0) {
 
@@ -49,8 +49,8 @@ namespace Time {
 	speed_ = speed;
   }
 
-  ITimer *createTimer() {
-	return new Timer;
+  ITimer *createTimer(IClock *parent) {
+	return new Timer(parent);
   }
 
 } //namespace Time

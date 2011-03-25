@@ -13,7 +13,7 @@ namespace Time {
 	virtual ~ITimer() {};
   };
 
-  ITimer *createTimer();
+  ITimer *createTimer(IClock *parent);
 
 } //namespace Time
 #endif //TIME_TIMER_H_

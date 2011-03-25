@@ -1,6 +1,8 @@
 #include "clock.h"
 #ifdef POSIX
 #include <time.h>
+#elif WINDOWS
+
 #else
 #include <ctime>
 #endif
@@ -13,6 +15,8 @@ namespace Time {
 	struct timespec now;
 	clock_gettime(CLOCK_MONOTONIC, &now);
 	millis = (now.tv_sec * 1000.0) + (now.tv_nsec / 1000000.0);
+#elif WINDOWS
+
 #else
 	clock_t now = clock();
 	millis = (now / CLOCKS_PER_SEC) * 1000;

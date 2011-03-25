@@ -7,86 +7,34 @@
 # Operating system
 OS = POSIX
 
-# Points to the root of Google Test
-GTEST_DIR = ./deps/gtest-1.5.0
-
-# Where to find user code.
-SRC_DIR = src
-TEST_DIR = test
-
 # Flags passed to the preprocessor.
-CPPFLAGS += -I$(GTEST_DIR)/include -I$(SRC_DIR) -lglut -lrt
+CPPFLAGS += -lrt
 
 # Flags passed to the C++ compiler.
 CXXFLAGS += -g -Wall -Wextra --pedantic
 
-# All tests produced by this Makefile.  Remember to add new tests you
-# created to the list.
-TESTS = test_clock
+# Time
+TIME_OBJ = clock.o timer.o
+TIME_SRC = src/time
+TIME_CPPFLAGS = -lrt
 
-# All Google Test headers.
-GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
-                $(GTEST_DIR)/include/gtest/internal/*.h
+clock.o : $(TIME_SRC)/clock.cc
+	$(CXX) $(TIME_CPPFLAGS) $(CXXFLAGS) -D$(OS) -c -o $@ $<
 
-# House-keeping build targets.
+timer.o : $(TIME_SRC)/timer.cc clock.o
+	$(CXX) $(TIME_CPPFLAGS) $(CXXFLAGS) -D$(OS) -c -o $@ $<
 
-all : $(TESTS)
+# Demo
+DEMO_OBJ = demo.o
+DEMO_SRC = src/demo
+DEMO_CPPFLAGS = -Isrc/time -lglut
 
+demo.o : $(DEMO_SRC)/demo.c $(TIME_OBJ)
+	$(CXX) $(DEMO_CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
+
+demo : $(DEMO_OBJ) $(TIME_OBJ)
+	$(CXX) $(DEMO_CPPFLAGS) $(CXXFLAGS) -D$(OS) $^ -o $@
+
+# Clean
 clean :
-	rm -f $(TESTS) gtest.a gtest_main.a *.o
-
-# Builds gtest.a and gtest_main.a.
-
-# Usually you shouldn't tweak such internal variables, indicated by a
-# trailing _.
-GTEST_SRCS_ = $(GTEST_DIR)/src/*.cc $(GTEST_DIR)/src/*.h $(GTEST_HEADERS)
-
-# For simplicity and to avoid depending on Google Test's
-# implementation details, the dependencies specified below are
-# conservative and not optimized.  This is fine as Google Test
-# compiles fast and for ordinary users its source rarely changes.
-gtest-all.o : $(GTEST_SRCS_)
-	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c \
-            $(GTEST_DIR)/src/gtest-all.cc
-
-gtest_main.o : $(GTEST_SRCS_)
-	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c \
-            $(GTEST_DIR)/src/gtest_main.cc
-
-gtest.a : gtest-all.o
-	$(AR) $(ARFLAGS) $@ $^
-
-gtest_main.a : gtest-all.o gtest_main.o
-	$(AR) $(ARFLAGS) $@ $^
-
-# Builds a sample test.  A test should link with either gtest.a or
-# gtest_main.a, depending on whether it defines its own main()
-# function.
-
-# sample1.o : $(USER_DIR)/sample1.cc $(USER_DIR)/sample1.h $(GTEST_HEADERS)
-#	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/sample1.cc
-#
-# sample1_unittest.o : $(USER_DIR)/sample1_unittest.cc \
-#                     $(USER_DIR)/sample1.h $(GTEST_HEADERS)
-#	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/sample1_unittest.cc
-#
-# sample1_unittest : sample1.o sample1_unittest.o gtest_main.a
-#	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
-
-clock.o : $(SRC_DIR)/clock.cc
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -D$(OS) -c $(SRC_DIR)/clock.cc
-
-timer.o : $(SRC_DIR)/timer.cc
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -D$(OS) -c $(SRC_DIR)/timer.cc
-
-test.o : $(SRC_DIR)/test.cc
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(SRC_DIR)/test.cc
-
-demo.o : $(SRC_DIR)/demo.c
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(SRC_DIR)/demo.c
-
-simple_test : test.o clock.o timer.o
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -D$(OS) $^ -o $@
-
-demo : demo.o timer.o clock.o
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -D$(OS) $^ -o $@
+	rm $(TIME_OBJ) $(DEMO_OBJ) demo
