@@ -5,8 +5,8 @@ namespace Time {
 
   class IClock {
   public:
-	virtual double getNow() = 0;
-	virtual ~IClock() {};
+    virtual double getNow() = 0;
+    virtual ~IClock() {};
   };
 
   IClock *createWallClock();

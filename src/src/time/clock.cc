@@ -1,9 +1,12 @@
 #include "clock.h"
+
 #ifdef POSIX
 #include <time.h>
+
 #elif WINDOWS
 #include <Windows.h>
 #include <time.h>
+
 #else
 #include <ctime>
 #endif
@@ -11,34 +14,35 @@
 namespace Time {
 
   double now() {
-	double millis = 0;
+    double millis = 0;
+
 #ifdef POSIX
-	struct timespec now;
-	clock_gettime(CLOCK_MONOTONIC, &now);
-	millis = (now.tv_sec * 1000.0) + (now.tv_nsec / 1000000.0);
+    struct timespec now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+    millis = (now.tv_sec * 1000.0) + (now.tv_nsec / 1000000.0);
+
 #elif WINDOWS
-	millis = (double)(GetTickCount());
+    millis = (double)(GetTickCount());
+
 #else
-	clock_t now = clock();
-	millis = (now / CLOCKS_PER_SEC) * 1000;
+    clock_t now = clock();
+    millis = (now / CLOCKS_PER_SEC) * 1000;
 #endif
-	return millis;
+
+    return millis;
   }
 
   class Clock : public IClock {
   public:
-	~Clock();
-	double getNow();
+    double getNow();
   };
 
-  Clock::~Clock() {}
-
   double Clock::getNow() {
-	return now();
+    return now();
   }
 
   IClock *createWallClock() {
-	return new Clock;
+    return new Clock;
   }
 
 } //namespace Time
