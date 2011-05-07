@@ -13,8 +13,8 @@ namespace Time {
     Timer(IClock *parent);
     double tick();
     double getNow();
-    void setParent(IClock *parent);
-    void setSpeed(double speed);
+    bool setParent(IClock *parent);
+    bool setSpeed(double speed);
   };
 
   Timer::Timer(IClock *parent)
@@ -37,20 +37,28 @@ namespace Time {
     return now_as_to_observer_;
   }
 
-  void Timer::setParent(IClock *parent) {
+  bool Timer::setParent(IClock *parent) {
+    if (!parent) {
+      return false;
+    }
     parent_ = parent;
     now_as_to_me_ = parent_->getNow();
     now_as_to_observer_ = now_as_to_me_;
+    return true;
   }
 
-  void Timer::setSpeed(double speed) {
+  bool Timer::setSpeed(double speed) {
     if (speed < 0) {
-      speed = 0;
+      return false;
     }
     speed_ = speed;
+    return true;
   }
 
   ITimer *createTimer(IClock *parent) {
+    if (!parent) {
+      return 0;
+    }
     return new Timer(parent);
   }
 

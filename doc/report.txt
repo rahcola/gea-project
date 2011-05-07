@@ -1,0 +1,11 @@
+Timer tools for game engine use
+
+Game Engine Architecture
+University of Helsinki
+Department of Computer Science
+
+Jani Rahkola
+013606996
+
+Timer tools
+
