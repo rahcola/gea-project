@@ -9,3 +9,90 @@ Jani Rahkola
 
 Timer tools
 
+The goal of this project was to implement timer tools for use in game
+engines. A timer is an object with a method tick(). Calling tick()
+returns the time elapsed since last call (or initialization of the
+object). This time can be used to decide how much to forward the
+simulation of a game world.
+
+The timer implemented in this project also has two other features. First
+one is relative speed. User of the timer can alter the relative speed of
+the timer. The speed will effect the time returned by tick(). So if a
+timer has a speed of 0.5 and the realtime has advanced 10ms since last
+call to tick(), the call will only return 5ms.
+
+Speed will also effect the other feature, parents. Every timer has a
+parent clock, which can be another timer or the wall clock. This parent
+is what provides the timer with it's idea of now. If the parent is the
+wall clock, then the now is constantly moving, and is measured from the
+system clock. Having a another timer as the parent is the more
+interesting case. The parent's now presented to the child is only
+forwarded when the parent's tick() is called. Also the speed of the
+parent alters the now shown to the child.
+
+So if a timer has another timer as it's parent, and tick() is called two
+times for this clock, the second call will always return 0ms. This is
+because the timer's idea of now, given by it's parent, is not
+forwarded. Only after the parent's tick() is called will the child's
+tick() return values greater than zero. The speed of the parent effects
+this interaction. If the parent has a speed of 0.5, it will increment
+the now shown to it's child with only half the time actually passed. So
+if 10ms of realtime has passed, and the tick() of the parent is called,
+only 5ms is returned, as stated above. But now if the tick() of the
+child is called, it will also return 5ms, even if the child's speed is
+1.0.
+
+With the combination of parent clocks and relative speed one can create
+chains of timers that share an idea of now. One can also alter the speed
+of all the timers in the chain by altering the speed of the grand parent
+of the chain.
+
+Implementation
+
+Two classes are defined to implement the ideas descriped above. First
+is the IClock interface. It provides a portable (windows and posix,
+other systems will not have millisecond precision) wall clock to be used
+as the base of the timer chain. The platform is detected at compilation
+time, and the preprocessor variable POSIX or WINDOWS has to be
+defined. If either of the variables is not defined, the C standard
+library time.h is included and the function clock() is used.
+
+ITimer is the interface for the timers. It extends the IClock interface
+so that timers can be used as parents to other timers. It provides the
+methods tick(), setSpeed() and setParent().
+
+Interfaces (provided with abstrac classes) are used to separate the
+implementation from the interface. Factory functions createWallClock()
+and createTimer() are provided as the only way to create instances of
+the classes. This way any changes to the implementation will not trigger
+a recompilation of the code using ITimer or IClock.
+
+The interaction of parents and relative speed is implemented using to
+variables, one for the actual now given by the timer's parent, and
+another for the now shown to others. Calling tick() first gets the now
+from the timer's parent, and calculates how much time has elapsed since
+last call. The internal idea of now is updated based on this value. The
+time delta calculated is then multiplied by the speed of the timer. This
+is the value returned by tick(), and the external idea of now is updated
+with this value.
+
+SetParent() requires it's parameter to be a non-null pointer. If a null
+pointer is passed, setParent() will return false and the previouse
+parent is not altered. For the same reasons createTimer() will return a
+null pointer if the pointer passed as a parameter is a null
+pointer. SetSpeed() requires the speed to be a non-negative value. If a
+negative value is passed, false is returned and the speed is not
+altered.
+
+Issues and improvements
+
+The effects of changing the speed of a timer during simulation are not
+tested. Big jumps from slow to fast or other way may create warping
+effects to the simulation.
+
+The value range of double is naturally limited. Long running simulations
+can exceed that range, and create wierd behaviours, especially in
+combination with the relative speed and parents.
+
+Portability is fairly limited, and I don't know if GetTickCount() is the
+best function to use in Windows platforms.
