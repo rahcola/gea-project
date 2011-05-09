@@ -32,8 +32,5 @@
     <ClCompile Include="..\..\src\src\demo\cli_demo.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\test\timer_unittest.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

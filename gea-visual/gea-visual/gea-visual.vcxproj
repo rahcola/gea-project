@@ -81,7 +81,6 @@
     <ClCompile Include="..\..\src\src\demo\cli_demo.cc" />
     <ClCompile Include="..\..\src\src\time\clock.cc" />
     <ClCompile Include="..\..\src\src\time\timer.cc" />
-    <ClCompile Include="..\..\src\test\timer_unittest.cc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
