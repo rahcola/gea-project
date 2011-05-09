@@ -57,6 +57,10 @@ time, and the preprocessor variable POSIX or WINDOWS has to be
 defined. If either of the variables is not defined, the C standard
 library time.h is included and the function clock() is used.
 
+IClock is defined as a class of its own to separate the platform
+dependent parts. It can also be used on its own for things like
+performance testing and the like.
+
 ITimer is the interface for the timers. It extends the IClock interface
 so that timers can be used as parents to other timers. It provides the
 methods tick(), setSpeed() and setParent().

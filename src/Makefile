@@ -5,7 +5,7 @@ OS = POSIX
 CXX = g++
 
 # Flags passed to the preprocessor.
-CPPFLAGS = -lrt
+CPPFLAGS =
 
 # Flags passed to the C++ compiler.
 CXXFLAGS = -g -Wall -Wextra --pedantic
@@ -13,7 +13,7 @@ CXXFLAGS = -g -Wall -Wextra --pedantic
 # Time
 TIME_OBJ = clock.o timer.o
 TIME_SRC = src/time
-TIME_CPPFLAGS = -lrt
+TIME_CPPFLAGS =
 
 clock.o : $(TIME_SRC)/clock.cc
 	$(CXX) $(TIME_CPPFLAGS) $(CXXFLAGS) -D$(OS) -c -o $@ $<
@@ -23,7 +23,7 @@ timer.o : $(TIME_SRC)/timer.cc
 
 # Demo
 DEMO_SRC = src/demo
-DEMO_CPPFLAGS = -lrt -Isrc/time
+DEMO_CPPFLAGS = -lrt -I$(TIME_SRC)
 
 cli_demo : $(DEMO_SRC)/cli_demo.cc clock.o timer.o
 	$(CXX) $(DEMO_CPPFLAGS) $(CXXFLAGS) -D$(OS) -o $@ $^
@@ -32,7 +32,7 @@ cli_demo : $(DEMO_SRC)/cli_demo.cc clock.o timer.o
 
 GTEST_DIR = deps/gtest-1.6.0
 TEST_DIR = test
-CPPFLAGS += -I$(GTEST_DIR)/include -I$(TIME_SRC)
+CPPFLAGS = -lrt -lpthread -I$(GTEST_DIR)/include -I$(TIME_SRC)
 
 TESTS = timer_unittest
 
@@ -65,6 +65,8 @@ gtest_main.a : gtest-all.o gtest_main.o
 
 # Unit tests
 
+TEST_OBJ = timer_unittest.o
+
 timer_unittest.o : $(TEST_DIR)/timer_unittest.cc \
                    $(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
@@ -74,4 +76,4 @@ timer_unittest : timer.o clock.o timer_unittest.o gtest_main.a
 
 # Clean
 clean :
-	rm $(TESTS) $(TIME_OBJ) cli_demo
+	rm $(TESTS) $(TEST_OBJ) $(TIME_OBJ) cli_demo

@@ -14,12 +14,14 @@
 namespace Time {
 
   double now() {
-    double millis = 0;
+    // remember old return value, to be returned in case of failure
+    static double millis = 0;
 
 #ifdef POSIX
     struct timespec now;
-    clock_gettime(CLOCK_MONOTONIC, &now);
-    millis = (now.tv_sec * 1000.0) + (now.tv_nsec / 1000000.0);
+    if (!clock_gettime(CLOCK_MONOTONIC, &now)) {
+      millis = (now.tv_sec * 1000.0) + (now.tv_nsec / 1000000.0);
+    }
 
 #elif WINDOWS
     millis = (double)(GetTickCount());
