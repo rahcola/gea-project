@@ -2,4 +2,5 @@ The project should compile with Visual Studio 2010 by using the provided VS proj
 Tests cannot be compiled with Visual Studio (tried, cannot comprehend the configurations needed).
 Makefile is also provided for compilation in a Linux system, where test can also be compiled and run.
 
-Visual Studio compiles the project demo to a gea-visual.exe. It requires 3 numeric float parameters, given in 2.3 form.
+Visual Studio compiles the project demo to a gea-visual.exe. 
+It requires 3 numeric float parameters, given in x.x form.
